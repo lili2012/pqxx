@@ -1,0 +1,26 @@
+  const char *option =
+    "dbname = twinworld user = postgres password = resafety host = "
+    "192.168.20.232 port = 5432 ";
+  pqxx::connection *conn = new pqxx::connection(option);
+  PGresult* re;
+  string error;
+  try
+  {
+    PGconn *con = PQconnectdb(option);
+    const char *command =
+      "SELECT geom FROM line.sz where _rc_id = 1";
+    re = PQexecParams(
+      con, command, 0, nullptr, nullptr, nullptr, nullptr, 1);
+  }
+  catch (const std::exception &e)
+  {
+    error = e.what();
+  }
+
+  int n = PQntuples(re);
+  /* Use PQfnumber to avoid assumptions about field order in result */
+  int i_fnum = PQfnumber(re, "geom");
+  for (int i = 0; i < n; i++) { 
+    void *iptr = PQgetvalue(re, i, i_fnum);
+    int ilen = PQgetlength(re, i, i_fnum);
+  }
